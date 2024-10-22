@@ -3,3 +3,4 @@
 - create new work space for post man 
 - install mongoose and server should run 2nd and 1st should be db 
 - created Scehma and model   
+- i install validator lib
