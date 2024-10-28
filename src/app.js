@@ -1,70 +1,26 @@
 const express = require("express");
 const connectDB = require("./config/db");
 const app = express();
+const router=express.Router()
 const User = require("./models/user");
 const bcrypt = require("bcrypt");
 const { validateReq } = require("./util/valiadateReq");
+const auth=require("../src/middleware/auth")
 var jwt = require("jsonwebtoken");
 var cookieParser = require("cookie-parser");
+const routerAuth=require("./routes/login")
+
+
 
 app.use(express.json());
 app.use(cookieParser());
+//rotes
+app.use("/auth", routerAuth); // Now, access login as /auth/login
+
 
 // Adjust the path as needed
 
-app.post("/login", async (req, res) => {
-  try {
-    const { emailId, password } = req.body;
 
-    // Find user by email
-    const user = await User.findOne({ emailId: emailId });
-    if (!user) {
-      return res.status(401).send("Invalid Credentials");
-    }
-
-    // Compare password
-    const isPassword = await bcrypt.compare(password, user.password);
-    if (isPassword) {
-      // Generate JWT tokenclear
-      
-      const token = jwt.sign({ _id: user._id }, "shhhhh");
-      console.log(token);
-
-      // Set token as cookie
-      res.cookie("token", token);
-      return res.send("Login success");
-    } else {
-      return res.status(401).send("Login not successful");
-    }
-  } catch (err) {
-    // General error handling
-    return res.status(500).send("Error finding login: " + err.message);
-  }
-});
-
-app.post("/signUp", async (req, res) => {
-  try {
-    validateReq(req);
-
-    const { firstName, lastName, emailId, password, age, gender } = req.body;
-
-    const hashPassword = await bcrypt.hash(password, 10);
-
-    const user = new User({
-      firstName,
-      lastName,
-      age,
-      emailId,
-      gender,
-      password: hashPassword,
-    });
-
-    await user.save();
-    res.status(201).send(`User ${firstName} added successfully`);
-  } catch (err) {
-    res.status(400).send(`Error from User: ${err.message}`);
-  }
-});
 
 app.get("/feed1", async (req, res) => {
   // Use req.query instead of req.body for a GET request

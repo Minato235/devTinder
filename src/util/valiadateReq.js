@@ -1,6 +1,6 @@
 const validator = require("validator");
 
-const validateReq = (req) => {
+const validateReq = (req, res, next) => {
   const { firstName, lastName, emailId, password } = req.body;
   const errors = [];
 
@@ -22,8 +22,10 @@ const validateReq = (req) => {
   }
 
   if (errors.length > 0) {
-    throw new Error(errors.join(" "));
+    return res.status(400).send(errors.join(" ")); // Send error response
   }
+
+  next(); // Call next middleware if validation passes
 };
 
-module.exports = { validateReq };
+module.exports = validateReq; // Export the function directly
